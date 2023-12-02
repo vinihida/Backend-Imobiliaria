@@ -6,11 +6,13 @@ var Cep = ["000340645", "000179872", "000439386", "000514657", "000993181", "000
 
 var template = [Numero, " ", Nome, ", ", Cidade, " ", Estado, ", ", Cep];
 
-function getRandomAddress() {
+ function getRandomAddress() {
   return template.map(getRandomElement).join("");
 }
 
-function getRandomElement(array: string | String[]) {
+ function getRandomElement(array) {
   if (array instanceof Array) return array[Math.floor(Math.random() * array.length)];
   else return array;
-};
+}
+
+console.log(getRandomAddress())
