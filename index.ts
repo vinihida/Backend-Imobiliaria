@@ -73,7 +73,21 @@ app.post('/authenticate_user', async (req: any, res: any) => {
 });
 
 app.post('/register_home', async (req: any, res: any) => {
+    
     const { endereco, numero, cep, tamanho, quartos, banheiros, descricao } = req.body;
-    console.log(endereco, numero, cep, tamanho, quartos, banheiros, descricao);
-    return res.status(201).send({ response: 'Home registered!' });
+    
+    const home = await prisma.home.create({
+        data: {
+            endereco,
+            numero,
+            cep,
+            tamanho,
+            quartos,
+            banheiros,
+            descricao
+        },
+    })
+
+    return res.json(home);
+    
 });
