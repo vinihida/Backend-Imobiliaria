@@ -1,12 +1,9 @@
 import { PrismaClient } from '@prisma/client'
-
 const bcrypt = require('bcrypt');
-
-var express = require('express');
-
-var app = express();
-
 const cors = require('cors');
+const { scrapp } = require('./scrapp/scrapp.ts')
+var express = require('express');
+var app = express();
 
 app.use(cors());
 
@@ -17,6 +14,8 @@ app.use(express.json());
 app.listen(8080, '0.0.0.0');
 
 const prisma = new PrismaClient()
+
+var homeMock = scrapp()
 
 app.get('/health', async (req: any, res: any) => {
     return res.status(200).send({ response: 'Server is runninsg!' });
@@ -75,7 +74,7 @@ app.post('/authenticate_user', async (req: any, res: any) => {
 app.post('/register_home', async (req: any, res: any) => {
     
     const { endereco, numero, cep, tamanho, quartos, banheiros, descricao } = req.body;
-    
+
     const home = await prisma.home.create({
         data: {
             endereco,
@@ -89,5 +88,9 @@ app.post('/register_home', async (req: any, res: any) => {
     })
 
     return res.json(home);
-    
+});
+
+app.get('/scrapp', async (req: any, res: any) => {
+    const homeMock = scrapp()
+    return res.json(homeMock)
 });

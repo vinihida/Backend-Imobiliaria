@@ -1,18 +1,32 @@
-var Numero = ["0", "1442", "4614", "4725", "4532", "1567", "1508", "4611", "4531", "0535", "4405", "3480", "1156"];
-var Nome = ["Rua da pedra", "Avenida General Osório", "Rua Brigadeiro Faria Lima", "Rua Pedro Noveleto", "Avenida Washington", "Avenida Sabugo de Milho"];
-var Cidade = ["Campinas", "Sumaré", "Hortolândia", "Americana", "Nova Odessa", "Caraguatatuba", "Mauá"];
-var Estado = ["São Paulo", "Rio de Janeiro", "Mato Grosso do Sul", "Minas Gerais", "Paraiba"];
-var Cep = ["000340645", "000179872", "000439386", "000514657", "000993181", "000633740"];
+const dataMatrix = [
+  ["0", "1442", "4614", "4725", "4532", "1567", "1508", "4611", "4531", "0535", "4405", "3480", "1156"], 
+  ["Rua da pedra", "Avenida General Osório", "Rua Brigadeiro Faria Lima", "Rua Pedro Noveleto", "Avenida Washington", "Avenida Sabugo de Milho"], 
+  ["Campinas", "Sumaré", "Hortolândia", "Americana", "Nova Odessa", "Caraguatatuba", "Mauá"], 
+  ["São Paulo", "Rio de Janeiro", "Mato Grosso do Sul", "Minas Gerais", "Paraiba"], 
+  ["000340645", "000179872", "000439386", "000514657", "000993181", "000633740"], 
+  [60, 70, 80, 90, 100, 110, 120, 300], 
+  [1, 2, 3, 4], 
+  [1, 2, 3], 
+  ["Casa incrível", "Antiga casa do Luciano Huck", "Casa das primas", "Casa de rico", "Casa de pobre", "Casa grande", "Casa bonita", "Casa do Caio"], 
+];
 
-var template = [Numero, " ", Nome, ", ", Cidade, " ", Estado, ", ", Cep];
-
- function getRandomAddress() {
-  return template.map(getRandomElement).join("");
+function scrapp() {
+  let addr: any[] = [];
+  dataMatrix.forEach((element) => {
+    var ret = getRandomElement(element)
+    addr.push(ret.toString());
+  })
+  return addr
 }
 
- function getRandomElement(array) {
-  if (array instanceof Array) return array[Math.floor(Math.random() * array.length)];
-  else return array;
+function getRandomAddress() {
+  return dataMatrix.map(getRandomElement).join("");
 }
 
-console.log(getRandomAddress())
+function getRandomElement(array: any) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+scrapp()
+
+module.exports = { scrapp }
