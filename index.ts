@@ -1,35 +1,32 @@
-import { PrismaClient } from '@prisma/client'
-const bcrypt = require('bcrypt');
-const cors = require('cors');
+import express, { Request, Response } from 'express';
+import { PrismaClient, User, Home } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import cors from 'cors';
+
 const { scrapp } = require('./scrapp/scrapp.ts')
-var express = require('express');
-var app = express();
+const app = express();
+const prisma = new PrismaClient();
 
 app.use(cors());
-
 app.use(express.urlencoded({ extended: false }));
-
 app.use(express.json());
 
-app.listen(8080, '0.0.0.0');
-
-const prisma = new PrismaClient()
-
-var homeMock = scrapp()
-
-app.get('/health', async (req: any, res: any) => {
-    return res.status(200).send({ response: 'Server is runninsg!' });
+app.listen(8080, '0.0.0.0', () => {
+    console.log('Server is running on port 8080');
 });
 
+app.get('/health', async (req: Request, res: Response) => {
+    return res.status(200).send({ response: 'Server is running!' });
+});
 
-app.post('/create_user', async (req: any, res: any) => {
-    const { nome, email, senha } = req.body;
+app.post('/create_user', async (req: Request, res: Response) => {
+    const { nome, email, senha } = req.body as { nome: string; email: string; senha: string };
 
-    const hasUser = await prisma.user.findUnique({
+    const hasUser: User | null = await prisma.user.findUnique({
         where: {
             email: email
         }
-    })
+    });
 
     if (hasUser) {
         return res.status(401).send({ error: 'This email is already registered.' });
@@ -43,20 +40,20 @@ app.post('/create_user', async (req: any, res: any) => {
             nome,
             email,
             senha: pswdHash
-        },
-    })
+        }
+    });
 
     return res.json(user);
 });
 
-app.post('/authenticate_user', async (req: any, res: any) => {
-    const { email, senha } = req.body;
+app.post('/authenticate_user', async (req: Request, res: Response) => {
+    const { email, senha } = req.body as { email: string; senha: string };
 
-    const hasUser = await prisma.user.findUnique({
+    const hasUser: User | null = await prisma.user.findUnique({
         where: {
             email: email
         }
-    })
+    });
 
     if (!hasUser) {
         return res.status(403).send({ error: 'This email is not registered.' });
@@ -68,12 +65,19 @@ app.post('/authenticate_user', async (req: any, res: any) => {
         return res.status(403).send({ error: 'Invalid credentials.' });
     }
 
-    return res.status(200).send({ msg: 'Okay!'});
+    return res.status(200).send({ msg: 'Okay!' });
 });
 
-app.post('/register_home', async (req: any, res: any) => {
-    
-    const { endereco, numero, cep, tamanho, quartos, banheiros, descricao } = req.body;
+app.post('/register_home', async (req: Request, res: Response) => {
+    const { endereco, numero, cep, tamanho, quartos, banheiros, descricao } = req.body as {
+        endereco: string;
+        numero: number;
+        cep: string;
+        tamanho: number;
+        quartos: number;
+        banheiros: number;
+        descricao: string;
+    };
 
     const home = await prisma.home.create({
         data: {
@@ -83,14 +87,14 @@ app.post('/register_home', async (req: any, res: any) => {
             tamanho,
             quartos,
             banheiros,
-            descricao
-        },
-    })
+            descricao,
+        }
+    });
 
     return res.json(home);
 });
 
-app.get('/scrapp', async (req: any, res: any) => {
-    const homeMock = scrapp()
-    return res.json(homeMock)
+app.get('/scrapp', async (req: Request, res: Response) => {
+    const homeMock = scrapp();
+    return res.json(homeMock);
 });
